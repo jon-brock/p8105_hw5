@@ -1,0 +1,37 @@
+---
+title: 'Data Science - Homework #5'
+author: "Jon Brock - JPB2210"
+output: 
+    github_document:
+        toc: TRUE
+        toc_depth: 2
+---
+
+> *"QUOTE*
+
+```{r load_packages, message = FALSE}
+library(tidyverse)
+```
+
+***
+
+## Problem #1
+###### (*20 points*)
+##### *Writing a function*
+
+***
+
+## Problem #2
+###### (*25 points*)
+##### *Tidy and plot longitudinal data*
+
+***
+
+## Problem #3
+###### (*35 points*)
+##### *Create and plot simulations*
+
+***
+
+## Bonus Content
+
