@@ -27,7 +27,13 @@ iris_with_missing = iris %>%
 
 
 ```{r writing function}
+species_replace <- function(x, y) {
+    
+    pull(x, y) %>% replace_na("virginica")
+    
+}
 
+species_replace(iris_with_missing, "Species")
 ```
 
 ***
@@ -39,7 +45,12 @@ iris_with_missing = iris %>%
 ```{r iteration of reading csv files, message = FALSE, warning = FALSE}
 csv_files <- list.files("./data", pattern = "*.csv", full.names = TRUE) %>%  
     set_names(nm = basename(.)) %>% 
-    map_df(read_csv, col_names = TRUE, col_types = cols(), .id = "filename")
+    map_df(read_csv, col_names = TRUE, col_types = cols(), .id = "filename") %>% 
+    mutate(
+        arm = str_sub(filename, 1,3),
+        id = str_sub(filename, 5,6)) %>% 
+    select(arm, id, week_1:week_8)
+
 
 csv_files
 ```
