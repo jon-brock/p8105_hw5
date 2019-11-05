@@ -55,7 +55,7 @@ species_replace(iris_with_missing, "Species")
 ###### (*25 points*)
 ##### *Tidy and plot longitudinal data*
 
-```{r iteration of reading csv files, message = FALSE, warning = FALSE}
+```{r iteration of reading csv files, message = FALSE, warning = FALSE, fig.width = 8, fig.height = 6, dpi = 200, fig.align = 'center'}
 csv_files <- list.files("./data", pattern = "*.csv", full.names = TRUE) %>%  
     set_names(nm = basename(.)) %>% 
     map_df(read_csv, col_names = TRUE, col_types = cols(), .id = "filename") %>% 
@@ -102,7 +102,7 @@ csv_files
 [https://github.com/STAT545-UBC/Discussion/issues/398]()  
 [https://gist.github.com/ColinFay/d74d331825868b181860212cd1577b69]()  
 [https://gist.github.com/ColinFay/d74d331825868b181860212cd1577b69]()  
-[https://lsru.github.io/tv_course/TD_purrr_solution.html]()
-[https://github.com/DanOvando/learn-purrr]()
-[https://stats.idre.ucla.edu/r/faq/how-can-i-visualize-longitudinal-data-in-ggplot2/]()
-[https://community.rstudio.com/t/using-case-when-over-multiple-columns/17206]()
+[https://lsru.github.io/tv_course/TD_purrr_solution.html]()  
+[https://github.com/DanOvando/learn-purrr]()  
+[https://stats.idre.ucla.edu/r/faq/how-can-i-visualize-longitudinal-data-in-ggplot2/]()  
+[https://community.rstudio.com/t/using-case-when-over-multiple-columns/17206]()  
