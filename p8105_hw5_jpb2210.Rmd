@@ -26,7 +26,7 @@ iris_with_missing = iris %>%
 ```
 
 
-```{r writing function}
+```{r writing functions}
 species_replace <- function(x, y) {
     
     pull(x, y) %>% replace_na("virginica")
@@ -34,6 +34,19 @@ species_replace <- function(x, y) {
 }
 
 species_replace(iris_with_missing, "Species")
+
+
+
+# TEST CODE BELOW
+
+
+#code_test <- function(x) {
+    
+#    modify_at(.x, .Species, replace_na("virginica"))
+    
+#}
+
+#code_test(iris_with_missing)
 ```
 
 ***
@@ -49,8 +62,20 @@ csv_files <- list.files("./data", pattern = "*.csv", full.names = TRUE) %>%
     mutate(
         arm = str_sub(filename, 1,3),
         id = str_sub(filename, 5,6)) %>% 
-    select(arm, id, week_1:week_8)
-
+    select(arm, id, week_1:week_8) %>% 
+    mutate(arm = case_when(
+        arm == "con" ~ "control_participant",
+        arm == "exp" ~ "experimental_participant")) %>% 
+    unite(participant, c(arm, id), remove = TRUE) %>% 
+    pivot_longer(-participant, names_to = "week_no", values_to = "count") %>% 
+    
+    ggplot(aes(x = week_no, y = count, group = participant, color = participant)) +
+    geom_line() +
+    labs(
+        title = "Count metrics for control and experimental arms",
+        subtitle = "[over the course of an eight week observation period]",
+        x = "Week No.",
+        y = "Count")
 
 csv_files
 ```
@@ -78,3 +103,6 @@ csv_files
 [https://gist.github.com/ColinFay/d74d331825868b181860212cd1577b69]()  
 [https://gist.github.com/ColinFay/d74d331825868b181860212cd1577b69]()  
 [https://lsru.github.io/tv_course/TD_purrr_solution.html]()
+[https://github.com/DanOvando/learn-purrr]()
+[https://stats.idre.ucla.edu/r/faq/how-can-i-visualize-longitudinal-data-in-ggplot2/]()
+[https://community.rstudio.com/t/using-case-when-over-multiple-columns/17206]()
