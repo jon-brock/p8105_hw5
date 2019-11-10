@@ -25,28 +25,60 @@ iris_with_missing = iris %>%
   mutate(Species = as.character(Species))
 ```
 
+The following code prints out the existing values of the `Species` variable within the `iris_with_missing` data frame. This is for illustrative purposes.  
 
-```{r writing functions}
+```{r demo of pre-function cleaning}
+pull(iris_with_missing, Species)
+```
+
+We can now write a function that will replace all of the `NA`s in the `Species` variable with `"virginica"`.  
+
+```{r writing functions, eval=FALSE}
 species_replace <- function(x, y) {
     
     pull(x, y) %>% replace_na("virginica")
-    
+
 }
 
+#################
+
+is_list(iris_with_missing)
+map(iris_with_missing, is_character)
+
+iris_with_missing %>% 
+    modify_if(is_character, replace_na("virginica")) %>% 
+    str()
+
+species_replace2 <- function(x) {
+    
+    if (is.character(x)) { 
+        replace_na("virginica")
+    }
+    
+    if (is.double(x){ 
+        
+        replace_na(mean())
+    })
+}
+
+
+
+
+#from video online
+    test_vector <- mean(pull(iris_with_missing$Sepal.Length, na.rm = TRUE))
+
+test_function <- function(x,y){ 
+    
+    if is_character(x$y)
+        
+        replace_na(x$y, "virginica")
+}
+```
+
+We can now use our new function `species_replace` to populate all of the `NA` values contained within the `Species` variable with `"virginica"`. We see from the following output that our function worked as it should.  
+
+```{r demo of function and post-function cleaning, eval=FALSE}
 species_replace(iris_with_missing, "Species")
-
-
-
-# TEST CODE BELOW
-
-
-#code_test <- function(x) {
-    
-#    modify_at(.x, .Species, replace_na("virginica"))
-    
-#}
-
-#code_test(iris_with_missing)
 ```
 
 ***
@@ -55,7 +87,7 @@ species_replace(iris_with_missing, "Species")
 ###### (*25 points*)
 ##### *Tidy and plot longitudinal data*
 
-```{r iteration of reading csv files, message = FALSE, warning = FALSE, fig.width = 8, fig.height = 6, dpi = 200, fig.align = 'center'}
+```{r iteration of reading csv files, message = FALSE, warning = FALSE}
 csv_files <- list.files("./data", pattern = "*.csv", full.names = TRUE) %>%  
     set_names(nm = basename(.)) %>% 
     map_df(read_csv, col_names = TRUE, col_types = cols(), .id = "filename") %>% 
@@ -67,8 +99,13 @@ csv_files <- list.files("./data", pattern = "*.csv", full.names = TRUE) %>%
         arm == "con" ~ "control_participant",
         arm == "exp" ~ "experimental_participant")) %>% 
     unite(participant, c(arm, id), remove = TRUE) %>% 
-    pivot_longer(-participant, names_to = "week_no", values_to = "count") %>% 
-    
+    pivot_longer(-participant, names_to = "week_no", values_to = "count")
+
+csv_files
+```
+
+```{r ggplot of longitudinal data, fig.width = 8, fig.height = 6, dpi = 200, fig.align = 'center'}
+csv_files %>% 
     ggplot(aes(x = week_no, y = count, group = participant, color = participant)) +
     geom_line() +
     labs(
@@ -76,9 +113,9 @@ csv_files <- list.files("./data", pattern = "*.csv", full.names = TRUE) %>%
         subtitle = "[over the course of an eight week observation period]",
         x = "Week No.",
         y = "Count")
-
-csv_files
 ```
+
+We observe that those in the experimental drug group have higher numeric values 
 
 ***
 
@@ -86,9 +123,63 @@ csv_files
 ###### (*35 points*)
 ##### *Create and plot simulations*
 
-```{r}
+```{r simulation}
+set.seed(1)
+
+sim_regression = function(n, beta0 = 2, beta1 = 0) {
+  
+  sim_data = tibble(
+    x = rnorm(n, mean = 0, sd = 1),
+    y = beta0 + beta1 * x + rnorm(n, 0, sqrt(50))
+  )
+  
+  ls_fit = lm(y ~ x, data = sim_data)
+  
+  tibble(
+    beta0_hat = coef(ls_fit)[1],
+    beta1_hat = coef(ls_fit)[2]
+    )
+  
+  broom::tidy(ls_fit)
+}
+```
+
+```{r eval = FALSE}
+output <- vector("list", length = 10000)
+
+for (i in 1:10000) {
+    
+    output[[i]] = sim_regression(n = 30, beta1 = 1)
+    output[[i]] = sim_regression(n = 30, beta1 = 2)
+    output[[i]] = sim_regression(n = 30, beta1 = 3)
+    output[[i]] = sim_regression(n = 30, beta1 = 4)
+    output[[i]] = sim_regression(n = 30, beta1 = 5)
+    output[[i]] = sim_regression(n = 30, beta1 = 6)
+    
+}
+
+bind_rows(output)
+
+
+
+
+#same code as above, but written using purrr language
+
+output2 <-
+    rerun(10000, sim_regression(n = 30)) %>% 
+    bind_rows()
+
+output2 %>% 
+    filter(term == "x") %>% 
+    select(-c(term, std.error, statistic)) %>% 
+    mutate(reject_h0 = case_when(
+                            p.value < 0.05 ~ "yes",
+                            p.value >= 0.05 ~ "no")) %>% 
+    count(reject_h0)
+
 
 ```
+
 
 ***
 
@@ -101,8 +192,8 @@ csv_files
 [https://www.hvitfeldt.me/blog/purrr-tips-and-tricks/#sources]()  
 [https://github.com/STAT545-UBC/Discussion/issues/398]()  
 [https://gist.github.com/ColinFay/d74d331825868b181860212cd1577b69]()  
-[https://gist.github.com/ColinFay/d74d331825868b181860212cd1577b69]()  
 [https://lsru.github.io/tv_course/TD_purrr_solution.html]()  
 [https://github.com/DanOvando/learn-purrr]()  
 [https://stats.idre.ucla.edu/r/faq/how-can-i-visualize-longitudinal-data-in-ggplot2/]()  
 [https://community.rstudio.com/t/using-case-when-over-multiple-columns/17206]()  
+[https://www.imachordata.com/linear-model-power-analysis-with-dplyr/]()  
