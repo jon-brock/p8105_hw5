@@ -27,18 +27,38 @@ iris_with_missing = iris %>%
   mutate(Species = as.character(Species))
 ```
 
+Let's take a quick look at our data frame before we replace our `NA` values.
+
+```{r data frame printing (pre)}
+iris_with_missing
+```
+
+Now, let's write a function to replace `NA` values of numeric vectors to be the mean value of that vector, and `"virginica"` for character vectors.  
 
 ```{r writing functions}
-## I understand what you want here, but coding it didn't work out for me.
-## Here's something I wrote that works, but I know it's not what you want.
-
-species_replace <- function(x, y) {
+replace_function <- function(x) {
     
-    pull(x, y) %>% replace_na("virginica")
+    if (is.numeric(x)) {
+        
+        replace_na(x, mean(x, na.rm = TRUE))
+        
+    }
+    
+    else if (is.character(x)) {
+        
+        replace_na(x, "virginica")
+
+    }
     
 }
 
-species_replace(iris_with_missing, "Species")
+iris_with_missing <- map_df(iris_with_missing, replace_function)
+```
+
+Now, let's take another quick look at our data frame post-`NA` replacement.
+
+```{r data frame printing (post)}
+iris_with_missing
 ```
 
 ***
