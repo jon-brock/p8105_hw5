@@ -29,8 +29,8 @@ iris_with_missing = iris %>%
 
 
 ```{r writing functions}
-# I understand what you want here, but coding it didn't work out for me.
-# Here's something I wrote that works, but I know it's not what you want.
+## I understand what you want here, but coding it didn't work out for me.
+## Here's something I wrote that works, but I know it's not what you want.
 
 species_replace <- function(x, y) {
     
