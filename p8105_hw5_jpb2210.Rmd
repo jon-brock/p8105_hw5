@@ -13,7 +13,7 @@ library(tidyverse)
 
 ***
 
-***Note: I'm having a real tough time in life right now, so this is the best I could do given the circumstances. I'm changing my registration for this course to pass/fail.***  
+***Note: I'm having a real tough time in life right now, so this is the best I could do given the circumstances.***  
 
 ## Problem #1
 ###### (*20 points*)
@@ -104,7 +104,7 @@ We observe that those in the experimental drug group have higher numeric values 
 ##### *Create and plot simulations*
 
 ```{r simulation 1}
-set.seed(1)
+set.seed(25)
 
 sim_regression = function(n, beta0 = 2, beta1 = 0) {
   
@@ -124,6 +124,8 @@ sim_regression = function(n, beta0 = 2, beta1 = 0) {
 }
 ```
 
+I could not figure out how to iterate over different beta 1's. This simulation only outputs data when beta 1 = 0.
+
 ```{r simulation 2}
 sim_results <-
     rerun(10000, sim_regression(n = 30)) %>% 
@@ -134,7 +136,11 @@ sim_results <-
                case_when(
                     p.value < 0.05 ~ "yes",
                     p.value >= 0.05 ~ "no"))
+
+sim_results
 ```
+
+Unable to make any graphs.
 
 ***
 
